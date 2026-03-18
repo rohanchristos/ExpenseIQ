@@ -1,0 +1,5 @@
+streamlit
+plotly
+pandas
+pillow
+# sqlite3 is part of the Python standard library — no install needed
