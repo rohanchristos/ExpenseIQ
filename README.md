@@ -35,7 +35,7 @@ cd expense_tracker
 pip install -r requirements.txt
 
 # 3. Run the app
-streamlit run app.py
+python -m streamlit run app.py
 ```
 
 The app opens at **http://localhost:8501** and seeds 5 demo expenses on first run.
