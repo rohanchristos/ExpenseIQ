@@ -50,8 +50,12 @@ def render_budget() -> None:
     current_month = get_current_month()
     months = get_month_options(n=12)
 
+    # Default to the sidebar's active month
+    global_month = st.session_state.get("global_month", current_month)
+    default_idx = months.index(global_month) if global_month in months else 0
+
     selected_month = st.selectbox(
-        "Select Month", months, index=0, key="budget_month",
+        "Select Month", months, index=default_idx, key="budget_month",
     )
 
     is_current = selected_month == current_month

@@ -62,12 +62,20 @@ def render_dashboard() -> None:
     st.markdown("## 📊 Dashboard")
 
     today = date.today()
-    cur_year, cur_month = today.year, today.month
-    cur_month_str = get_current_month()
-    prev_y, prev_m = _prev_month(cur_year, cur_month)
 
-    # ── Quick Add Expander ────────────────────────────────────
-    _render_quick_add(cur_month_str)
+    # Read the active month from the sidebar selector
+    active_month = st.session_state.get("global_month", get_current_month())
+    parts = active_month.split("-")
+    cur_year, cur_month = int(parts[0]), int(parts[1])
+    cur_month_str = active_month
+    prev_y, prev_m = _prev_month(cur_year, cur_month)
+    is_current = active_month == get_current_month()
+
+    # ── Quick Add Expander (only for current month) ───────────
+    if is_current:
+        _render_quick_add(cur_month_str)
+    else:
+        st.info(f"📅 Viewing **{active_month}** — switch to current month to add expenses.")
 
     # ── Fetch data with spinner ───────────────────────────────
     try:
@@ -87,7 +95,8 @@ def render_dashboard() -> None:
         return
 
     # ── KPI Metrics ───────────────────────────────────────────
-    _render_kpis(summary, prev_summary, budgets_df, today)
+    days_ref = today.day if is_current else 30
+    _render_kpis(summary, prev_summary, budgets_df, days_ref)
 
     st.markdown("---")
 
@@ -166,7 +175,7 @@ def _render_kpis(
     summary: pd.DataFrame,
     prev_summary: pd.DataFrame,
     budgets_df: pd.DataFrame,
-    today: date,
+    days_elapsed: int,
 ) -> None:
     """Render the 4 KPI metric cards."""
 
@@ -184,7 +193,6 @@ def _render_kpis(
         biggest_amt = 0
 
     # Daily average
-    days_elapsed = today.day
     daily_avg = total_this / days_elapsed if days_elapsed > 0 else 0
 
     # Remaining budget
