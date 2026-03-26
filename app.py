@@ -30,6 +30,7 @@ from components.dashboard import render_dashboard
 from components.expenses import render_expenses
 from components.analytics import render_analytics
 from components.budget import render_budget
+from components.login_page import render_login
 
 
 # ───────────────────────────────────────────────────────────────
@@ -93,14 +94,23 @@ def main() -> None:
     # 1. Inject custom CSS
     inject_css()
 
-    # 2. Initialize DB + seed demo data
+    # 2. Initialize login state
+    if "logged_in" not in st.session_state:
+        st.session_state["logged_in"] = False
+
+    # 3. Check Authentication — show login if not logged in
+    if not st.session_state["logged_in"]:
+        render_login()
+        return
+
+    # 4. Initialize DB + seed demo data
     _ensure_db()
     _seed_demo_data()
 
-    # 3. Render sidebar and get page selection
+    # 5. Render sidebar and get page selection
     page = render_sidebar()
 
-    # 4. Route to the selected page
+    # 6. Route to the selected page
     renderer = _PAGE_RENDERERS.get(page)
 
     if renderer:

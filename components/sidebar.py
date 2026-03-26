@@ -65,6 +65,17 @@ def render_sidebar() -> str:
         )
         st.caption("Smart Personal Finance Tracker")
 
+        # ── Logged-in user badge ──────────────────────────────
+        username = st.session_state.get("username", "User")
+        st.markdown(
+            f"<p style='"
+            f"color:#00D4AA; font-size:0.78rem; margin:6px 0 0 0; "
+            f"padding:4px 10px; background:rgba(0,212,170,0.08); "
+            f"border-radius:6px; display:inline-block;"
+            f"'>👤 {username}</p>",
+            unsafe_allow_html=True,
+        )
+
         st.markdown("---")
 
         # ── Navigation ────────────────────────────────────────
@@ -116,6 +127,13 @@ def render_sidebar() -> str:
 
         # ── Footer: DB Info ───────────────────────────────────
         _render_db_info()
+
+        st.markdown("---")
+
+        # ── Logout ────────────────────────────────────────────
+        if st.button("🚪 Logout", use_container_width=True):
+            st.session_state["logged_in"] = False
+            st.rerun()
 
     return _NAV_MAP.get(selection, "Dashboard")
 
